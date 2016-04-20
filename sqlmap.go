@@ -18,6 +18,7 @@ func Scan(rows *sql.Rows, obj interface{}) error {
 	for c, col := range cols {
 		i := 0
 		for i < num {
+			//fmt.Printf("name=%s\n", elem.Type().Field(i).Type.Kind().String())
 			if elem.Type().Field(i).Tag.Get("sqlmap") == col {
 				v := elem.Field(i).Addr().Interface()
 				values[c] = v
@@ -25,6 +26,7 @@ func Scan(rows *sql.Rows, obj interface{}) error {
 			}
 			i++
 		}
+		//elem.T
 	}
 	err = rows.Scan(values...)
 	if err != nil {
@@ -32,3 +34,19 @@ func Scan(rows *sql.Rows, obj interface{}) error {
 	}
 	return nil
 }
+
+/*
+func FlatStructToStr(obj interface{}) string {
+	elem := reflect.ValueOf(obj).Elem()
+	num := elem.NumField()
+	i := 0
+	var buff bytes.Buffer
+	for i < num {
+		if elem.Type().Field(i).Type.Kind() != reflect.Struct {
+			buff.WriteString(fmt.Sprintf("%v", elem.Field(i).Interface()))
+			buff.WriteString(" ")
+		}
+		i++
+	}
+	return buff.String()
+}*/
